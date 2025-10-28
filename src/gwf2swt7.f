@@ -339,9 +339,7 @@ C ------INITIALIZE ARRAYS
       DO I=1,NROW
       DO J=1,NCOL
       GL(J,I,N)=0.0
-      PCS(J,I,N)=0.0
       EST(J,I,N)=0.0
-      PCS(J,I,N)=0.0
       ESTOLD(J,I,N)=0.0
       ZC(J,I,N)=0.0
       enddo
@@ -1060,8 +1058,6 @@ C
 C8------ACCUMULATE SUBSIDENCE ASSOCIATED WITH CHANGE IN STORAGE
       DELB=STRG/(DELR(J)*DELC(I))
       SUB(J,I,KQ)=SUB(J,I,KQ)+DELB
-!      write(1052, '(i10,2(1x,i10),8(1x,g20.7))') 
-!     2  k, i, j, GLN, ESTN, ESTN1, PCTMP, rho1, rho2, STRG, DELB
 C
 C ------UPDATE VOID RATIO AND THICKNESS ARRAYS
       IF(IVOID.GT.0) THEN
@@ -1583,38 +1579,22 @@ C     ------------------------------------------------------------------
      1          IBOUND(NCOL,NROW,NLAY),
      2          HNEW(NCOL,NROW,NLAY),BOTM(NCOL,NROW,0:Nlay)
 C
-      INEGCNT = 0
       DO K=1,NLAY
       DO IR=1,NROW
       DO IC=1,NCOL
       EST(IC,IR,K)=0.0
       IF(IBOUND(IC,IR,K).EQ.0) CYCLE
       HHNEW=HNEW(IC,IR,K)
-      BBOTM = BOTM(IC,IR,K)
-      IF (HHNEW.LT.BBOTM) HHNEW = BBOTM
-      EST(IC,IR,K)=GL(IC,IR,K)-HHNEW+BBOTM
+      EST(IC,IR,K)=GL(IC,IR,K)-HHNEW+BOTM(IC,IR,K)
       IF(EST(IC,IR,K).LT.0.0) THEN
-        INEGCNT = INEGCNT + 1
-        IF (INEGCNT.EQ.1) THEN
-          WRITE(IOUT,'(///,1X,A,//,1X,A10,3(1X,A5),6(1X,A10))')
-     1     'SUMMARY OF NEGATIVE EFFECTIVE STRESS LOCATIONS',     
-     2     '     COUNT', '  ROW', '  COL', '  LAY', 
-     3     '    BOTTOM', '       TOP', '      HEAD', 
-     4     'GEO.STRESS', 'PRESS.HEAD', 'EFF.STRESS'
-        ENDIF
-        WRITE(IOUT,'(1X,I10,1X,3(I5,1X),6(F10.3,1x))')
-     1    INEGCNT, IR, IC, K, BOTM(IC,IR,K-1), BBOTM, HHNEW,
-     2    GL(IC,IR,K), HHNEW-BBOTM, EST(IC,IR,K)
+       WRITE(IOUT,5) IR,IC,K
+    5  FORMAT(' NEGATIVE EFFECTIVE STRESS VALUE AT (ROW,COL,LAY):',
+     $ 3I5,/,'   ABORTING...')
+      CALL USTOP('')
       ENDIF
       ENDDO
       ENDDO
       ENDDO
-    5 FORMAT(//1X,'NEGATIVE EFFECTIVE STRESS VALUES ABORTING...')
-      IF (INEGCNT.GT.0) THEN
-        WRITE(*,5)
-        WRITE(IOUT,5)
-        CALL USTOP('')
-      ENDIF
 C
 C ------RETURN
       RETURN

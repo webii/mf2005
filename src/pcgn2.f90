@@ -104,7 +104,7 @@ CONTAINS
           STOP
        ELSE
           IF (LEN_TRIM(CHAR_STRING)==0) CYCLE
-          CHECK=CHAR_STRING(1:1)
+          CHECK=CHAR_STRING
           IF (CHECK=='#') CYCLE
           L_COUNT=L_COUNT+1
           DATA_STRING(L_COUNT)=TRIM(CHAR_STRING)

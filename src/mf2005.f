@@ -24,7 +24,7 @@ C
 C-------ASSIGN VERSION NUMBER AND DATE
       CHARACTER*40 VERSION
       CHARACTER*10 MFVNAM
-      PARAMETER (VERSION='1.12.01b 3/7/2019')
+      PARAMETER (VERSION='1.12.00 2/3/2017')
       PARAMETER (MFVNAM='-2005')
 C
       CHARACTER*80 HEADNG(2)
@@ -742,9 +742,6 @@ C     Write times to file if requested
           WRITE(IOUT,1040) NSECS,MSECS
         ENDIF
       ENDIF
-C
-C     Ensure all output files are written
-      CALL FLUSH()
 C
       RETURN
       END
